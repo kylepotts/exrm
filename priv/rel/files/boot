@@ -82,8 +82,8 @@ relx_escript() {
 
 # Output a start command for the last argument of run_erl
 relx_start_command() {
-    printf "exec \"%s\" \"%s\"" "$RELEASE_ROOT_DIR/bin/$REL_NAME" \
-           "$START_OPTION"
+    printf "exec \"%s\" \"%s\" %s" "$RELEASE_ROOT_DIR/bin/$REL_NAME" \
+           "$START_OPTION" "$1"
 }
 
 # Convert .conf to sys.config using conform escript
@@ -273,9 +273,13 @@ case "$1" in
             echo "Unable to write to $PIPE_DIR. Quitting."
             exit 1
         fi
+        EXTRA_ARGS_LIST=""
+        for exarg in $3; do
+          EXTRA_ARGS_LIST=$(printf  '%s %s' "$EXTRA_ARGS_LIST" "$exarg")
+        done
 
         "$BINDIR/run_erl" -daemon "$PIPE_DIR" "$RUNNER_LOG_DIR" \
-                          "$(relx_start_command)"
+                          "$(relx_start_command "$EXTRA_ARGS_LIST")"
         ;;
 
     stop)
@@ -596,9 +600,9 @@ case "$1" in
 
         # Execute as command-line utility
         #
-        # Like the escript command, this does not start the OTP application. 
+        # Like the escript command, this does not start the OTP application.
         # If your command depends on a running OTP application,
-        # use 
+        # use
         #
         #     {:ok, _} = Application.ensure_all_started(:your_app)
 
