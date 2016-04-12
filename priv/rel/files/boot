@@ -273,11 +273,7 @@ case "$1" in
             echo "Unable to write to $PIPE_DIR. Quitting."
             exit 1
         fi
-        EXTRA_ARGS_LIST=""
-        for exarg in $3; do
-          EXTRA_ARGS_LIST=$(printf  '%s %s' "$EXTRA_ARGS_LIST" "$exarg")
-        done
-
+        EXTRA_ARGS_LIST=$3
         "$BINDIR/run_erl" -daemon "$PIPE_DIR" "$RUNNER_LOG_DIR" \
                           "$(relx_start_command "$EXTRA_ARGS_LIST")"
         ;;
